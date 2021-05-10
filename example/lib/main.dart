@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:instagram_share_api/instagram_share_api.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instagram_share_api_example/recording.dart';
-import 'package:share/share.dart';
 
 void main() {
   runApp(MyApp());
@@ -80,7 +79,7 @@ class _HomeState extends State<Home> {
                       .getImage(source: ImageSource.gallery)
                       .then((value) => value?.path);
                   if (path != null) {
-                    await InstagramShareApi.sharePhoto(path);
+                    await InstagramShareApi.sharePhotoStory(path);
                   } else {
                     setState(() {
                       _result = 'Source is not selected!';
@@ -101,7 +100,7 @@ class _HomeState extends State<Home> {
                       .getVideo(source: ImageSource.gallery)
                       .then((value) => value?.path);
                   if (path != null) {
-                    await InstagramShareApi.shareVideo(path);
+                    await InstagramShareApi.shareVideoStory(path);
                   } else {
                     setState(() {
                       _result = 'Source is not selected!';
@@ -118,15 +117,11 @@ class _HomeState extends State<Home> {
             TextButton(
               onPressed: () async {
                 try {
-                  var cameras = await availableCameras();
-                  var path = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) =>
-                              TakePictureScreen(camera: cameras.first)));
+                  var path = await _imagePicker
+                      .getVideo(source: ImageSource.gallery)
+                      .then((value) => value.path);
                   if (path != null) {
-                    print(path);
-                    InstagramShareApi.shareFeed(path);
+                    InstagramShareApi.shareVideoFeed(path);
                   }
                 } on PlatformException catch (e) {
                   setState(() {
@@ -134,7 +129,27 @@ class _HomeState extends State<Home> {
                   });
                 }
               },
-              child: Text('Feed Video'),
+              child: Text('Feed Video From Album'),
+            ),
+            TextButton(
+              onPressed: () async {
+                try {
+                  var cameras = await availableCameras();
+                  var path = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) =>
+                              TakePictureScreen(camera: cameras.first)));
+                  if (path != null) {
+                    InstagramShareApi.shareVideoFeed(path);
+                  }
+                } on PlatformException catch (e) {
+                  setState(() {
+                    _result = e.message;
+                  });
+                }
+              },
+              child: Text('Feed Video Recording'),
             ),
             TextButton(
               onPressed: () async {
@@ -143,8 +158,7 @@ class _HomeState extends State<Home> {
                       .getImage(source: ImageSource.gallery)
                       .then((value) => value.path);
                   if (path != null) {
-                    print(path);
-                    Share.shareFiles([path]);
+                    InstagramShareApi.sharePhotoFeed(path);
                   }
                 } on PlatformException catch (e) {
                   setState(() {

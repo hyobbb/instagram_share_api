@@ -29,25 +29,35 @@ public class SwiftInstagramShareApiPlugin: NSObject, FlutterPlugin {
     }
     
     private func shareFeed(_ path:String, _ result: FlutterResult) {
-        let fileUrl = URL(fileURLWithPath: path);
-        let fetchOptions = PHFetchOptions()
-        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate",ascending: false)]
-        fetchOptions.predicate = NSPredicate(format: "mediaType = %d || mediaType = %d", PHAssetMediaType.image.rawValue, PHAssetMediaType.video.rawValue)
-        fetchOptions.fetchLimit = 1
+        let videoURL = URL(fileURLWithPath: path);
         
-        let fetchResult = PHAsset.fetchAssets(with: fetchOptions)
-        if let asset = fetchResult.firstObject{
-            let localIdentifier = asset.localIdentifier
-            let u = "instagram://library?LocalIdentifier=" + localIdentifier
-            let url = NSURL(string: u)!
-            if UIApplication.shared.canOpenURL(url as URL) {
-                if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(URL(string: u)!, options: [:], completionHandler: nil)
-                }
-            } else {
-                result(FlutterError(code: "", message: "instagram is not installed", details: nil))
-            }
-        }
+        let activityItems = [videoURL]
+        let activityController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+        
+        let controller = UIApplication.shared.keyWindow?.rootViewController
+        
+        activityController.popoverPresentationController?.sourceView = controller?.view
+        
+        controller?.present(activityController, animated: true, completion: nil)
+        
+//        let fetchOptions = PHFetchOptions()
+//        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate",ascending: false)]
+//        fetchOptions.predicate = NSPredicate(format: "mediaType = %d || mediaType = %d", PHAssetMediaType.image.rawValue, PHAssetMediaType.video.rawValue)
+//        fetchOptions.fetchLimit = 1
+//
+//        let fetchResult = PHAsset.fetchAssets(with: fetchOptions)
+//        if let asset = fetchResult.firstObject{
+//            let localIdentifier = asset.localIdentifier
+//            let u = "instagram://library?LocalIdentifier=" + localIdentifier
+//            let url = NSURL(string: u)!
+//            if UIApplication.shared.canOpenURL(url as URL) {
+//                if #available(iOS 10.0, *) {
+//                    UIApplication.shared.open(URL(string: u)!, options: [:], completionHandler: nil)
+//                }
+//            } else {
+//                result(FlutterError(code: "", message: "instagram is not installed", details: nil))
+//            }
+//        }
     }
     
     private func sharePhotoStory(_ path:String, _ result: FlutterResult) {

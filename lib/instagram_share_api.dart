@@ -11,22 +11,29 @@ class InstagramShareApi {
     return version;
   }
 
-  static Future<void> sharePhoto(String path) async {
+  static Future<void> sharePhotoStory(String path) async {
     return await _channel.invokeMethod('sharePhoto', <String, dynamic>{
       'path': path,
     });
   }
 
-  static Future<void> shareVideo(String path) async {
+  static Future<void> shareVideoStory(String path) async {
     return await _channel.invokeMethod('shareVideo', <String, dynamic>{
       'path': path,
     });
   }
 
-  static Future<void> shareFeed(String path) async {
+  static Future<void> sharePhotoFeed(String path) async {
     return await _channel.invokeMethod('shareFeed', <String, dynamic>{
       'path' : path,
+      'type' : 'image/*'
     });
   }
 
+  static Future<void> shareVideoFeed(String path) async {
+    return await _channel.invokeMethod('shareFeed', <String, dynamic>{
+      'path' : path,
+      'type' : 'video/*'
+    });
+  }
 }

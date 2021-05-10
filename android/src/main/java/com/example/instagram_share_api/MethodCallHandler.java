@@ -17,29 +17,30 @@ public class MethodCallHandler implements MethodChannel.MethodCallHandler {
     public void onMethodCall(MethodCall call, MethodChannel.Result result) {
         if (call.method.equals("getPlatformVersion")) {
             result.success(String.format("Android %s", android.os.Build.VERSION.RELEASE));
-        } else if(call.method.equals("sharePhoto")) {
+        } else if (call.method.equals("sharePhoto")) {
             String path = call.argument("path");
-            if(path==null){
-                result.error("path_null", "Filepath is not given", "");
-            } else {
-                try {
-                    instagramShare.sharePhoto(path);
-                    result.success(null);
-                } catch (IOException e) {
-                    result.error("IOException", e.getMessage(), null);
-                }
+            try {
+                instagramShare.sharePhoto(path);
+                result.success(null);
+            } catch (IOException e) {
+                result.error("IOException", e.getMessage(), null);
             }
-        } else if(call.method.equals("shareVideo")) {
+        } else if (call.method.equals("shareVideo")) {
             String path = call.argument("path");
-            if(path==null){
-                result.error("path_null", "Filepath is not given", "");
-            } else {
-                try {
-                    instagramShare.shareVideo(path);
-                    result.success(null);
-                } catch (IOException e) {
-                    result.error("IOException", e.getMessage(), null);
-                }
+            try {
+                instagramShare.shareVideo(path);
+                result.success(null);
+            } catch (IOException e) {
+                result.error("IOException", e.getMessage(), null);
+            }
+        } else if (call.method.equals("shareFeed")) {
+            String path = call.argument("path");
+            String type = call.argument("type");
+            try {
+                instagramShare.shareFeed(path, type);
+                result.success(null);
+            } catch (IOException e) {
+                result.error("IOException", e.getMessage(), null);
             }
         } else {
             result.notImplemented();

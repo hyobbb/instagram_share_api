@@ -70,6 +70,26 @@ public class InstagramShare {
     startActivity(intent);
   }
 
+  void shareFeed(String path, String type) throws IOException {
+    if (path == null || path.isEmpty()) {
+      throw new IllegalArgumentException("Non-empty path expected");
+    }
+
+    if (!isAppInstalled("com.instagram.android")) {
+      throw new Resources.NotFoundException("Instagram is not installed");
+    }
+
+    clearExternalShareFolder();
+    Uri uri = getUriForPath(path);
+
+    Intent intent = new Intent(Intent.ACTION_SEND);
+    //image: "image/*", video: "video/*"
+    intent.setType(type);
+    intent.putExtra(Intent.EXTRA_STREAM, uri);
+
+    startActivity(Intent.createChooser(intent, "Share To"));
+  }
+
   private boolean isAppInstalled(String uri) {
     try {
       getContext().getPackageManager().getPackageInfo(uri, 0);
